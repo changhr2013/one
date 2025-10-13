@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日60秒 · 读懂世界</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --bg-primary: #fafbfc;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --text-muted: #a0aec0;
+            --border-light: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 6px 10px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.1), 0 10px 20px rgba(0,0,0,0.05);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* 背景装饰 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 头部区域 */
+        .header {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-gradient);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo-text h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+
+        .logo-text p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 12px 20px;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .date-selector label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .date-selector input[type="date"] {
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .loading, .error {
+            text-align: center;
+            padding: 80px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(102, 126, 234, 0.2);
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 壁纸展示区域 */
+        .hero-section {
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .hero-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-image:hover {
+            transform: scale(1.02);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0) 0%,
+                rgba(0,0,0,0.1) 50%,
+                rgba(0,0,0,0.7) 100%
+            );
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 30px 40px;
+            color: white;
+            width: 100%;
+        }
+
+        .hero-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero-description {
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.5;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .hero-copyright {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .content-wrapper {
+            padding: 40px;
+        }
+
+        .meta-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: var(--radius-lg);
+            border-left: 4px solid #667eea;
+        }
+
+        .date-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .current-date {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .lunar-date {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .day-indicator {
+            background: var(--accent-gradient);
+            color: white;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* 新闻列表 */
+        .news-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
+        .news-list {
+            list-style: none;
+            display: grid;
+            gap: 16px;
+            counter-reset: news-counter;
+        }
+
+        .news-item {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .news-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .news-item::before {
+            content: counter(news-counter);
+            counter-increment: news-counter;
+            position: absolute;
+            left: -8px;
+            top: 20px;
+            width: 28px;
+            height: 28px;
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: var(--shadow-md);
+        }
+
+        .news-item-content {
+            margin-left: 20px;
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+
+        /* 每日寄语 */
+        .tip-section {
+            background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%);
+            border: 1px solid rgba(240, 147, 251, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tip-section::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 60px;
+            color: rgba(240, 147, 251, 0.3);
+            font-family: serif;
+            line-height: 1;
+        }
+
+        .tip-section::after {
+            content: '"';
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 60px;
+            color: rgba(240, 147, 251, 0.3);
+            font-family: serif;
+            line-height: 1;
+        }
+
+        .tip-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tip-content {
+            font-size: 18px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            font-style: italic;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header {
+                padding: 30px 20px;
+                margin-bottom: 20px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo-text h1 {
+                font-size: 24px;
+            }
+
+            .hero-section {
+                height: 300px;
+            }
+
+            .hero-content {
+                padding: 20px;
+            }
+
+            .hero-title {
+                font-size: 20px;
+            }
+
+            .hero-description {
+                font-size: 14px;
+            }
+
+            .hero-copyright {
+                top: 15px;
+                right: 15px;
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+
+            .content-wrapper {
+                padding: 30px 20px;
+            }
+
+            .meta-section {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .current-date {
+                font-size: 20px;
+            }
+
+            .news-item {
+                padding: 16px;
+            }
+
+            .news-item::before {
+                left: -6px;
+                top: 16px;
+                width: 24px;
+                height: 24px;
+                font-size: 11px;
+            }
+
+            .news-item-content {
+                margin-left: 16px;
+                font-size: 15px;
+            }
+
+            .tip-section {
+                padding: 24px 20px;
+            }
+
+            .tip-section::before,
+            .tip-section::after {
+                font-size: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 20px 15px;
+            }
+
+            .hero-section {
+                height: 250px;
+            }
+
+            .content-wrapper {
+                padding: 20px 15px;
+            }
+
+            .logo-text h1 {
+                font-size: 20px;
+            }
+
+            .news-item-content {
+                font-size: 14px;
+            }
+
+            .tip-content {
+                font-size: 16px;
+            }
+        }
+
+        /* 加载动画 */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">60</div>
+                    <div class="logo-text">
+                        <h1>每日60秒</h1>
+                        <p>读懂世界 · 洞察未来</p>
+                    </div>
+                </div>
+                <div class="date-selector">
+                    <label for="date-picker">📅</label>
+                    <input type="date" id="date-picker">
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div id="content-area">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>正在为您精心准备今日资讯...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const datePicker = document.getElementById('date-picker');
+            const contentArea = document.getElementById('content-area');
+            const newsApiBaseUrl = 'https://60s.viki.moe/v2/60s';
+            const wallpaperApiUrl = 'https://60s.viki.moe/v2/bing?encoding=json';
+
+            const formatDate = (date) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            };
+
+            const fetchWallpaper = async () => {
+                try {
+                    const response = await fetch(wallpaperApiUrl);
+                    if (!response.ok) {
+                        throw new Error('获取壁纸失败');
+                    }
+                    const result = await response.json();
+                    if (result.code === 200) {
+                        return result.data;
+                    }
+                    throw new Error(result.message || '壁纸数据错误');
+                } catch (error) {
+                    console.error('获取壁纸时出错:', error);
+                    return null;
+                }
+            };
+
+            const fetchAndRenderNews = async (dateString) => {
+                contentArea.innerHTML = `
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>正在为您精心准备今日资讯...</p>
+                    </div>
+                `;
+                
+                let newsUrl = `${newsApiBaseUrl}?encoding=json`;
+                if (dateString) {
+                    newsUrl += `&date=${dateString}`;
+                }
+
+                try {
+                    // 并行获取新闻和壁纸数据
+                    const [newsResponse, wallpaperData] = await Promise.all([
+                        fetch(newsUrl),
+                        fetchWallpaper()
+                    ]);
+
+                    if (!newsResponse.ok) {
+                        throw new Error(`网络响应错误: ${newsResponse.statusText}`);
+                    }
+                    
+                    const newsResult = await newsResponse.json();
+
+                    if (newsResult.code !== 200) {
+                        throw new Error(newsResult.message || '获取数据失败');
+                    }
+                    
+                    const newsData = newsResult.data;
+                    
+                    const newsItemsHtml = newsData.news.map(item => `
+                        <li class="news-item">
+                            <div class="news-item-content">${item}</div>
+                        </li>
+                    `).join('');
+
+                    // 构建壁纸部分HTML
+                    let heroSectionHtml = '';
+                    if (wallpaperData) {
+                        heroSectionHtml = `
+                            <div class="hero-section">
+                                <img src="${wallpaperData.cover}" alt="${wallpaperData.title}" class="hero-image">
+                                <div class="hero-overlay"></div>
+                                <div class="hero-copyright">${wallpaperData.copyright}</div>
+                                <div class="hero-content">
+                                    <h2 class="hero-title">${wallpaperData.headline}</h2>
+                                    <p class="hero-description">${wallpaperData.description}</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    contentArea.innerHTML = `
+                        ${heroSectionHtml}
+                        <div class="content-wrapper fade-in">
+                            <div class="meta-section">
+                                <div class="date-info">
+                                    <div class="current-date">${newsData.date}</div>
+                                    <div class="lunar-date">${newsData.lunar_date}</div>
+                                </div>
+                                <div class="day-indicator">${newsData.day_of_week}</div>
+                            </div>
+                            
+                            <div class="news-section">
+                                <h2 class="section-title">今日要闻</h2>
+                                <ul class="news-list">
+                                    ${newsItemsHtml}
+                                </ul>
+                            </div>
+                            
+                            <div class="tip-section">
+                                <div class="tip-title">💭 每日寄语</div>
+                                <div class="tip-content">${newsData.tip}</div>
+                            </div>
+                        </div>
+                    `;
+
+                } catch (error) {
+                    console.error('获取新闻时出错:', error);
+                    contentArea.innerHTML = `
+                        <div class="error">
+                            <div style="font-size: 48px; margin-bottom: 16px;">😔</div>
+                            <h3>抱歉，暂时无法获取资讯</h3>
+                            <p>请检查网络连接或稍后再试</p>
+                            <small style="color: var(--text-muted); margin-top: 12px;">${error.message}</small>
+                        </div>
+                    `;
+                }
+            };
+
+            // 初始化
+            const today = new Date();
+            const todayString = formatDate(today);
+            
+            datePicker.value = todayString;
+            datePicker.max = todayString;
+            
+            fetchAndRenderNews(todayString);
+
+            datePicker.addEventListener('change', (event) => {
+                fetchAndRenderNews(event.target.value);
+            });
+        });
+    </script>
+</body>
+</html>
