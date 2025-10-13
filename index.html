@@ -10,6 +10,7 @@
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             --bg-primary: #fafbfc;
             --bg-secondary: #ffffff;
             --text-primary: #2d3748;
@@ -194,14 +195,10 @@
             position: relative;
             height: 400px;
             overflow: hidden;
-            display: flex;
-            align-items: flex-end;
+            cursor: pointer;
         }
 
         .hero-image {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -224,14 +221,22 @@
                 rgba(0,0,0,0.1) 50%,
                 rgba(0,0,0,0.7) 100%
             );
+            transition: opacity 0.3s ease;
         }
 
         .hero-content {
-            position: relative;
-            z-index: 2;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
             padding: 30px 40px;
             color: white;
-            width: 100%;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-content.hidden {
+            transform: translateY(100%);
         }
 
         .hero-title {
@@ -258,6 +263,30 @@
             border-radius: var(--radius-sm);
             font-size: 12px;
             backdrop-filter: blur(10px);
+        }
+
+        .hero-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
         }
 
         .content-wrapper {
@@ -315,15 +344,39 @@
             margin-bottom: 24px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-title-left {
+            display: flex;
+            align-items: center;
             gap: 12px;
         }
 
-        .section-title::before {
+        .section-title-left::before {
             content: '';
             width: 4px;
             height: 24px;
             background: var(--primary-gradient);
             border-radius: 2px;
+        }
+
+        .copy-all-btn {
+            background: var(--success-gradient);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .copy-all-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
         .news-list {
@@ -341,6 +394,9 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             backdrop-filter: blur(10px);
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
         }
 
         .news-item:hover {
@@ -352,9 +408,6 @@
         .news-item::before {
             content: counter(news-counter);
             counter-increment: news-counter;
-            position: absolute;
-            left: -8px;
-            top: 20px;
             width: 28px;
             height: 28px;
             background: var(--primary-gradient);
@@ -366,13 +419,54 @@
             font-size: 12px;
             font-weight: 700;
             box-shadow: var(--shadow-md);
+            flex-shrink: 0;
         }
 
         .news-item-content {
-            margin-left: 20px;
+            flex: 1;
             font-size: 16px;
             line-height: 1.7;
             color: var(--text-primary);
+        }
+
+        .news-item-actions {
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .news-item:hover .news-item-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            color: var(--text-secondary);
+            padding: 6px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .action-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            color: var(--text-primary);
+            transform: scale(1.1);
+        }
+
+        .action-btn.copied {
+            background: var(--success-gradient);
+            color: white;
+            border-color: transparent;
         }
 
         /* 每日寄语 */
@@ -429,6 +523,29 @@
             z-index: 1;
         }
 
+        /* 提示消息 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success-gradient);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .container {
@@ -477,6 +594,13 @@
                 padding: 6px 10px;
             }
 
+            .hero-toggle {
+                top: 15px;
+                left: 15px;
+                width: 36px;
+                height: 36px;
+            }
+
             .content-wrapper {
                 padding: 30px 20px;
             }
@@ -493,19 +617,24 @@
 
             .news-item {
                 padding: 16px;
+                flex-direction: column;
+                gap: 12px;
             }
 
             .news-item::before {
-                left: -6px;
-                top: 16px;
+                align-self: flex-start;
                 width: 24px;
                 height: 24px;
                 font-size: 11px;
             }
 
             .news-item-content {
-                margin-left: 16px;
                 font-size: 15px;
+            }
+
+            .news-item-actions {
+                opacity: 1;
+                align-self: flex-end;
             }
 
             .tip-section {
@@ -515,6 +644,16 @@
             .tip-section::before,
             .tip-section::after {
                 font-size: 40px;
+            }
+
+            .section-title {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .copy-all-btn {
+                align-self: flex-end;
             }
         }
 
@@ -541,6 +680,16 @@
 
             .tip-content {
                 font-size: 16px;
+            }
+
+            .toast {
+                right: 15px;
+                left: 15px;
+                transform: translateY(-100px);
+            }
+
+            .toast.show {
+                transform: translateY(0);
             }
         }
 
@@ -589,6 +738,12 @@
         </main>
     </div>
 
+    <!-- 提示消息 -->
+    <div id="toast" class="toast">
+        <span id="toast-icon">✓</span>
+        <span id="toast-message">复制成功</span>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const datePicker = document.getElementById('date-picker');
@@ -596,11 +751,97 @@
             const newsApiBaseUrl = 'https://60s.viki.moe/v2/60s';
             const wallpaperApiUrl = 'https://60s.viki.moe/v2/bing?encoding=json';
 
+            let currentNewsData = null;
+
             const formatDate = (date) => {
                 const year = date.getFullYear();
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const day = String(date.getDate()).padStart(2, '0');
                 return `${year}-${month}-${day}`;
+            };
+
+            const showToast = (message, icon = '✓') => {
+                const toast = document.getElementById('toast');
+                const toastIcon = document.getElementById('toast-icon');
+                const toastMessage = document.getElementById('toast-message');
+                
+                toastIcon.textContent = icon;
+                toastMessage.textContent = message;
+                
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            };
+
+            const copyToClipboard = async (text) => {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                } catch (err) {
+                    // 降级方案
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-999999px';
+                    textArea.style.top = '-999999px';
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    
+                    try {
+                        document.execCommand('copy');
+                        textArea.remove();
+                        return true;
+                    } catch (err) {
+                        textArea.remove();
+                        return false;
+                    }
+                }
+            };
+
+            const copyNewsItem = async (text, button) => {
+                const success = await copyToClipboard(text);
+                if (success) {
+                    button.classList.add('copied');
+                    button.innerHTML = '✓';
+                    showToast('新闻已复制到剪贴板');
+                    
+                    setTimeout(() => {
+                        button.classList.remove('copied');
+                        button.innerHTML = '📋';
+                    }, 2000);
+                } else {
+                    showToast('复制失败，请手动选择复制', '❌');
+                }
+            };
+
+            const copyAllNews = async () => {
+                if (!currentNewsData) return;
+                
+                const allNewsText = currentNewsData.news
+                    .map((item, index) => `${index + 1}、${item}`)
+                    .join('\n\n');
+                
+                const fullText = `📅 ${currentNewsData.date} ${currentNewsData.day_of_week}\n🌙 ${currentNewsData.lunar_date}\n\n📰 今日要闻：\n\n${allNewsText}\n\n💭 每日寄语：\n${currentNewsData.tip}`;
+                
+                const success = await copyToClipboard(fullText);
+                if (success) {
+                    showToast('全部内容已复制到剪贴板', '📋');
+                } else {
+                    showToast('复制失败，请手动选择复制', '❌');
+                }
+            };
+
+            const toggleHeroDescription = () => {
+                const heroContent = document.querySelector('.hero-content');
+                const toggleBtn = document.querySelector('.hero-toggle');
+                
+                if (heroContent && toggleBtn) {
+                    heroContent.classList.toggle('hidden');
+                    toggleBtn.innerHTML = heroContent.classList.contains('hidden') ? '👁️' : '🙈';
+                }
             };
 
             const fetchWallpaper = async () => {
@@ -651,10 +892,14 @@
                     }
                     
                     const newsData = newsResult.data;
+                    currentNewsData = newsData;
                     
-                    const newsItemsHtml = newsData.news.map(item => `
+                    const newsItemsHtml = newsData.news.map((item, index) => `
                         <li class="news-item">
                             <div class="news-item-content">${item}</div>
+                            <div class="news-item-actions">
+                                <button class="action-btn copy-btn" onclick="copyNewsItem('${item.replace(/'/g, "\\'")}', this)" title="复制这条新闻">📋</button>
+                            </div>
                         </li>
                     `).join('');
 
@@ -662,9 +907,10 @@
                     let heroSectionHtml = '';
                     if (wallpaperData) {
                         heroSectionHtml = `
-                            <div class="hero-section">
+                            <div class="hero-section" onclick="toggleHeroDescription()">
                                 <img src="${wallpaperData.cover}" alt="${wallpaperData.title}" class="hero-image">
                                 <div class="hero-overlay"></div>
+                                <button class="hero-toggle" onclick="event.stopPropagation(); toggleHeroDescription();" title="切换描述显示">🙈</button>
                                 <div class="hero-copyright">${wallpaperData.copyright}</div>
                                 <div class="hero-content">
                                     <h2 class="hero-title">${wallpaperData.headline}</h2>
@@ -686,7 +932,10 @@
                             </div>
                             
                             <div class="news-section">
-                                <h2 class="section-title">今日要闻</h2>
+                                <div class="section-title">
+                                    <div class="section-title-left">今日要闻</div>
+                                    <button class="copy-all-btn" onclick="copyAllNews()" title="复制全部内容">📋 复制全部</button>
+                                </div>
                                 <ul class="news-list">
                                     ${newsItemsHtml}
                                 </ul>
@@ -698,6 +947,11 @@
                             </div>
                         </div>
                     `;
+
+                    // 重新绑定事件处理器
+                    window.copyNewsItem = copyNewsItem;
+                    window.copyAllNews = copyAllNews;
+                    window.toggleHeroDescription = toggleHeroDescription;
 
                 } catch (error) {
                     console.error('获取新闻时出错:', error);
@@ -724,6 +978,11 @@
             datePicker.addEventListener('change', (event) => {
                 fetchAndRenderNews(event.target.value);
             });
+
+            // 全局函数定义
+            window.copyNewsItem = copyNewsItem;
+            window.copyAllNews = copyAllNews;
+            window.toggleHeroDescription = toggleHeroDescription;
         });
     </script>
 </body>
