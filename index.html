@@ -265,30 +265,6 @@
             backdrop-filter: blur(10px);
         }
 
-        .hero-toggle {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .hero-toggle:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.1);
-        }
-
         .content-wrapper {
             padding: 40px;
         }
@@ -594,13 +570,6 @@
                 padding: 6px 10px;
             }
 
-            .hero-toggle {
-                top: 15px;
-                left: 15px;
-                width: 36px;
-                height: 36px;
-            }
-
             .content-wrapper {
                 padding: 30px 20px;
             }
@@ -760,17 +729,27 @@
                 return `${year}-${month}-${day}`;
             };
 
+            const escapeHtml = (str) => str.replace(/[&<>"']/g, (ch) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[ch]));
+
+            let toastTimer = null;
             const showToast = (message, icon = '✓') => {
                 const toast = document.getElementById('toast');
                 const toastIcon = document.getElementById('toast-icon');
                 const toastMessage = document.getElementById('toast-message');
-                
+
                 toastIcon.textContent = icon;
                 toastMessage.textContent = message;
-                
+
                 toast.classList.add('show');
-                
-                setTimeout(() => {
+
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
                     toast.classList.remove('show');
                 }, 3000);
             };
@@ -801,7 +780,8 @@
                 }
             };
 
-            const copyNewsItem = async (text, button) => {
+            const copyNewsItem = async (index, button) => {
+                const text = currentNewsData.news[index];
                 const success = await copyToClipboard(text);
                 if (success) {
                     button.classList.add('copied');
@@ -836,11 +816,8 @@
 
             const toggleHeroDescription = () => {
                 const heroContent = document.querySelector('.hero-content');
-                const toggleBtn = document.querySelector('.hero-toggle');
-                
-                if (heroContent && toggleBtn) {
+                if (heroContent) {
                     heroContent.classList.toggle('hidden');
-                    toggleBtn.innerHTML = heroContent.classList.contains('hidden') ? '👁️' : '🙈';
                 }
             };
 
@@ -896,9 +873,9 @@
                     
                     const newsItemsHtml = newsData.news.map((item, index) => `
                         <li class="news-item">
-                            <div class="news-item-content">${item}</div>
+                            <div class="news-item-content">${escapeHtml(item)}</div>
                             <div class="news-item-actions">
-                                <button class="action-btn copy-btn" onclick="copyNewsItem('${item.replace(/'/g, "\\'")}', this)" title="复制这条新闻">📋</button>
+                                <button class="action-btn copy-btn" onclick="copyNewsItem(${index}, this)" title="复制这条新闻">📋</button>
                             </div>
                         </li>
                     `).join('');
@@ -910,7 +887,6 @@
                             <div class="hero-section" onclick="toggleHeroDescription()">
                                 <img src="${wallpaperData.cover}" alt="${wallpaperData.title}" class="hero-image">
                                 <div class="hero-overlay"></div>
-                                <button class="hero-toggle" onclick="event.stopPropagation(); toggleHeroDescription();" title="切换描述显示">🙈</button>
                                 <div class="hero-copyright">${wallpaperData.copyright}</div>
                                 <div class="hero-content">
                                     <h2 class="hero-title">${wallpaperData.headline}</h2>
